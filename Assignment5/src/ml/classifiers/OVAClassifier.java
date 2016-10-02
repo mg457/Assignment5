@@ -15,25 +15,35 @@ public class OVAClassifier implements Classifier {
 	
 	@Override
 	public void train(DataSet data) {
-		//output list of k-1/2
-		//input = samples x, list of labels where y is label for x_i
-		//for each k in labels, construct new label vector where z_i = 1 if y=k and z = 0 otherwise
 		
-		//HashMap to store classifiers <sampleIndex, label> 
-		HashMap<Integer, Double> map = new HashMap<Integer, Double>();
+		// copy data because will be changing the labels
 		DataSet copy = new DataSet(data.getFeatureMap());
 		
+		Set<Double> labels = copy.getLabels();
+		ArrayList<Example> examples = copy.getData();
 		
-		
-
+		//for each label, run through all examples & make labels binary
+		for(double i : labels) {
+			for (Example ex : examples) {
+				if(ex.getLabel() == i) {
+					ex.setLabel(1);
+				}
+				else{
+					ex.setLabel(0);
+				}
+			}	
+		}
+		// need to output structure w/labels associated with classifiers?
 	}
 
 	@Override
 	public double classify(Example example) {
-		// TODO Auto-generated method stub
 		//classify: if classifier doesn't provide confidence & there is ambiguity, pick majority in conflict
 		//otherwise pick most confident positive
 		//if none vote positive, pick least confident negative
+		
+		example.getLabel();
+		
 		return 0;
 	}
 
