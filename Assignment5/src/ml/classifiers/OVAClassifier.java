@@ -7,6 +7,7 @@ import java.util.*;
 public class OVAClassifier implements Classifier {
 	
 	ClassifierFactory factory;
+	HashMap<Double, DecisionTreeClassifier> classifiers;
 	
 	public OVAClassifier(ClassifierFactory factory) {
 		this.factory = factory;	
@@ -21,19 +22,25 @@ public class OVAClassifier implements Classifier {
 		
 		Set<Double> labels = copy.getLabels();
 		ArrayList<Example> examples = copy.getData();
+		classifiers = new HashMap<Double, DecisionTreeClassifier>();
+		
 		
 		//for each label, run through all examples & make labels binary
 		for(double i : labels) {
 			for (Example ex : examples) {
+				DecisionTreeClassifier dtc = new DecisionTreeClassifier();
 				if(ex.getLabel() == i) {
-					ex.setLabel(1);
+					ex.setLabel(1.0);
+					dtc.train(copy);
+					classifiers.put(i, dtc);
 				}
 				else{
-					ex.setLabel(0);
+					ex.setLabel(0.0);
+					dtc.train(copy);
+					classifiers.put(i, dtc);
 				}
 			}	
-		}
-		// need to output structure w/labels associated with classifiers?
+		}	
 	}
 
 	@Override
@@ -42,6 +49,9 @@ public class OVAClassifier implements Classifier {
 		//otherwise pick most confident positive
 		//if none vote positive, pick least confident negative
 		
+		for(DecisionTreeClassifier dt : classifiers.values()) {
+			
+		}
 		example.getLabel();
 		
 		return 0;
