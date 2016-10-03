@@ -6,6 +6,7 @@ import ml.data.DataSet;
 import ml.data.Example;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -34,28 +35,47 @@ public class AVAClassifier implements Classifier {
      */
     @Override
     public void train(DataSet data) {
-        ArrayList<Double> labels = (ArrayList<Double>) data.getLabels();
+        ArrayList<Double> labels = new ArrayList<Double>();
+       // Object[] labels = data.getLabels().toArray();
+       // System.out.println(labels);
+        System.out.println(data.getLabels().toString());
+        for(double i : data.getLabels()) {
+        	labels.add(i);
+        }
+        System.out.println(labels.toString());
+
         //classifiers = new HashMap<Double[], Classifier>();
         classifiers = new ArrayList<Classifier>();
 
 
         //for each pair of labels, train a classifier to distinguish between the 1st and 2nd label
         for (double label1 : labels) {
-            for (double label2 : labels.subList(labels.indexOf(label1) + 1, labels.size())) {
-                DataSet copy = new DataSet(data.getFeatureMap());
-                ArrayList<Example> examples = data.getData();
-                Classifier myClassifier = factory.getClassifier();
-                for (Example ex : examples) {
-                    if (ex.getLabel() == label1) { //set all examples labeled with label 1 as positive
-                        ex.setLabel(1.0);
-                        copy.addData(ex);
-                    } else if (ex.getLabel() == label2) { //set all examples labeled with label 2 as negative
-                        ex.setLabel(-1.0);
-                        copy.addData(ex);
-                    }
-                }
-                myClassifier.train(copy);
-                classifiers.add(myClassifier);
+        	for(double label2 : labels) {
+        		if(label1 != label2) { //make sure training on 2 separate labels
+	                DataSet copy = new DataSet(data.getFeatureMap());
+	                ArrayList<Example> examples = data.getData();
+	                Classifier myClassifier = factory.getClassifier();
+	                for (Example ex : examples) {	
+	                    if (ex.getLabel() == (double) label1) { //set all examples labeled with label 1 as positive
+	                    	System.out.println("here1");
+	                    	Example newEx = new Example(ex);
+	                        newEx.setLabel(1.0);
+	                        copy.addData(newEx);
+	                    } else if (ex.getLabel() == (double) label2) { //set all examples labeled with label 2 as negative
+	                    	System.out.println("here2");
+	                    	Example newEx = new Example(ex);
+	                        newEx.setLabel(-1.0);
+	                        copy.addData(newEx);
+	                    }
+	                }
+	                System.out.println("copy: " + copy.getData().toString());
+	                if(!copy.getData().isEmpty()) {
+	                	System.out.println("training");
+		                myClassifier.train(copy);
+	                }
+	                classifiers.add(myClassifier);
+
+        		}
             }
         }
 
@@ -80,6 +100,7 @@ public class AVAClassifier implements Classifier {
                 labelTotals.set(label2, labelTotals.get(label2) - weight);
                 indexHolder++;
             }
+            indexHolder = 0;
         }
         return labelTotals.indexOf(Collections.max(labelTotals));
     }
