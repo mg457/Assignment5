@@ -32,6 +32,7 @@ public class OVAClassifier implements Classifier {
 				else{
 					ex.setLabel(0.0);
 				}
+				copy.addData(ex);
 			}
 			myClassifier.train(copy);
 			classifiers.put(i, myClassifier);
@@ -41,13 +42,13 @@ public class OVAClassifier implements Classifier {
 	@Override
 	public double classify(Example example) {
 
-		//get possible labels. store the labels and confidence values for the most confidenct positive
+		//get possible labels. store the labels and confidence values for the most confident positive
 		//prediction and the least confident negative prediction
 		Set<Double> myLabels = classifiers.keySet();
 		double myMaxConfPos = 0;
 		double myMaxPosLabel = -1;
 		double myLeastConfNeg = 0;
-		double myMinNegLabel = -1;
+		double myMinNegLabel = -1; 
 
 		for(double label : myLabels) {
 			//get the relevant classifier

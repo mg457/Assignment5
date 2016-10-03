@@ -21,14 +21,33 @@ public class Experiments {
 //			}	
 //		}
 		
-		DataSetSplit ds = wineDataset.split(0.8);
-		for(int i = 0; i < 50; i++) {
-			dt.setDepthLimit(i);
-			dt.train(ds.getTrain());
-			System.out.println("Depth = " + i);
-			System.out.println("Train acc: " + getAccuracy(dt, ds.getTrain(), wineDataset));
-			System.out.println("Test acc: " + getAccuracy(dt, ds.getTest(), wineDataset) + "\n");
+//		DataSetSplit ds = wineDataset.split(0.8);
+//		for(int i = 0; i < 50; i++) {
+//			dt.setDepthLimit(i);
+//			dt.train(ds.getTrain());
+//			System.out.println("Depth = " + i);
+//			System.out.println("Train acc: " + getAccuracy(dt, ds.getTrain(), wineDataset));
+//			System.out.println("Test acc: " + getAccuracy(dt, ds.getTest(), wineDataset) + "\n");
+//		}
+		
+		//Q4 
+		
+		CrossValidationSet cvs = new CrossValidationSet(wineDataset, 10, true);
+		for (int i = 0; i < 10; i++) {
+			DataSetSplit ds = cvs.getValidationSet(i);
+			System.out.print(i + ",");
+			for(int d = 1; d < 4; d++) {
+				ClassifierFactory factory = new ClassifierFactory(0);
+				OVAClassifier oc1 = new OVAClassifier(factory); //dt classifier
+				AVAClassifier ac = new AVAClassifier(factory);
+				DecisionTreeClassifier dtc = (DecisionTreeClassifier) factory.getClassifier(); //get a new DTC
+				dt.setDepthLimit(d);
+				oc1.train(ds.getTrain());
+				ac.train(ds.getTrain());
+				
+			}
 		}
+		
 		
 		
 	}
