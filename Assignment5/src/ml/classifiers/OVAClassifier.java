@@ -7,39 +7,34 @@ import java.util.*;
 public class OVAClassifier implements Classifier {
 	
 	ClassifierFactory factory;
-	HashMap<Double, DecisionTreeClassifier> classifiers;
+	HashMap<Double, Classifier> classifiers;
 	
 	public OVAClassifier(ClassifierFactory factory) {
 		this.factory = factory;	
 	}
-	
-	
+
 	@Override
 	public void train(DataSet data) {
 		
-		// copy data because will be changing the labels
-		DataSet copy = new DataSet(data.getFeatureMap());
-		
-		Set<Double> labels = copy.getLabels();
-		ArrayList<Example> examples = copy.getData();
-		classifiers = new HashMap<Double, DecisionTreeClassifier>();
-		
-		
+		Set<Double> labels = data.getLabels();
+		classifiers = new HashMap<Double, Classifier>();
+
 		//for each label, run through all examples & make labels binary
+		//train a classifier on this data and add it to our map
 		for(double i : labels) {
+			DataSet copy = new DataSet(data.getFeatureMap());
+			ArrayList<Example> examples = copy.getData();
+			Classifier myClassifier = factory.getClassifier();
 			for (Example ex : examples) {
-				DecisionTreeClassifier dtc = new DecisionTreeClassifier();
 				if(ex.getLabel() == i) {
 					ex.setLabel(1.0);
-					dtc.train(copy);
-					classifiers.put(i, dtc);
 				}
 				else{
 					ex.setLabel(0.0);
-					dtc.train(copy);
-					classifiers.put(i, dtc);
 				}
-			}	
+			}
+			myClassifier.train(copy);
+			classifiers.put(i, myClassifier);
 		}	
 	}
 
@@ -59,8 +54,7 @@ public class OVAClassifier implements Classifier {
 
 	@Override
 	public double confidence(Example example) {
-		// prediction = b + sum w_i * f_i
-		// but return 0 for now..?
+
 		return 0;
 	}
 
