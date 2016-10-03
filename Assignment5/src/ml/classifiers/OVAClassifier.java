@@ -15,7 +15,7 @@ public class OVAClassifier implements Classifier {
 
 	@Override
 	public void train(DataSet data) {
-		
+
 		Set<Double> labels = data.getLabels();
 		classifiers = new HashMap<Double, Classifier>();
 
@@ -40,21 +40,40 @@ public class OVAClassifier implements Classifier {
 
 	@Override
 	public double classify(Example example) {
-		//classify: if classifier doesn't provide confidence & there is ambiguity, pick majority in conflict
-		//otherwise pick most confident positive
-		//if none vote positive, pick least confident negative
-		
-		for(DecisionTreeClassifier dt : classifiers.values()) {
-			
+
+		//get possible labels. store the labels and confidence values for the most confidenct positive
+		//prediction and the least confident negative prediction
+		Set<Double> myLabels = classifiers.keySet();
+		double myMaxConfPos = 0;
+		double myMaxPosLabel = -1;
+		double myLeastConfNeg = 0;
+		double myMinNegLabel = -1;
+
+		for(double label : myLabels) {
+			//get the relevant classifier
+			Classifier myClassifier = classifiers.get(label);
+			double myPrediction = myClassifier.classify(example);
+			double myConfidence = myClassifier.confidence(example);
+
+			//if positive prediction and highest confidence so far, update our stored values
+			if (myPrediction > 0 && myConfidence > myMaxConfPos) {
+				myMaxConfPos = myConfidence;
+				myMaxPosLabel = label;
+			//or, if we have the least confident negative prediction so far, update our stored values
+			} else if (myConfidence < myLeastConfNeg) {
+				myLeastConfNeg = myConfidence;
+				myMinNegLabel = label;
+			}
 		}
-		example.getLabel();
-		
-		return 0;
+
+		//return the max positive label if we actually updated it; return the min negative label if we
+		//never saw a positive label
+		if (myMaxPosLabel >= 0) { return myMaxPosLabel; }
+		else return myMinNegLabel;
 	}
 
 	@Override
 	public double confidence(Example example) {
-
 		return 0;
 	}
 
