@@ -1,85 +1,98 @@
+//Nick Reminder, Maddie Gordon
+//cs158 ps5
 package ml.classifiers;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
 
 import ml.data.DataSet;
 import ml.data.Example;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+/**
+ * All-vs-all classifier class.
+ *
+ * @author Nick Reminder, Maddie Gordon
+ */
 public class AVAClassifier implements Classifier {
-	
-	ClassifierFactory factory;
-	ArrayList<Classifier> classifiers;
-	
-	public AVAClassifier(ClassifierFactory factory) {
-		this.factory = factory;
-	}
 
-	@Override
-	public void train(DataSet data) {
-		ArrayList<Double> labels = (ArrayList<Double>) data.getLabels();
-		//classifiers = new HashMap<Double[], Classifier>();
-		classifiers = new ArrayList<Classifier>();
-		
-		
-		//for each pair of labels, train a classifier to distinguish between the 1st and 2nd label
-		for(double label1 : labels) {
-			for(double label2 : labels.subList(1, labels.size())) {
-				DataSet copy = new DataSet(data.getFeatureMap());
-				Classifier myClassifier = factory.getClassifier();
-				ArrayList<Example> examples = copy.getData();
-				for(Example ex : examples) {
-					if(ex.getLabel() == label1) { //set all examples labeled with label 1 as positive
-						ex.setLabel(1.0);
-					}else if(ex.getLabel() == label2) { //set all examples labeled with label 2 as negative
-						ex.setLabel(0.0);
-					}
-					copy.addData(ex);
-				}
-				
-				myClassifier.train(copy);
-				
-				//store pair of labels with associated classifier
-//				Double[] comparedLabels = new Double[2];
-//				comparedLabels[0] = label1;
-//				comparedLabels[1] = label2;
-//				classifiers.put(comparedLabels, myClassifier); 
-				
-				//store classifier associated with the current pair of labels
-				classifiers.add(myClassifier);
-			}
-		}
-		
-	}
+    ClassifierFactory factory;
+    ArrayList<Classifier> classifiers;
 
-	@Override
-	public double classify(Example example) {
-		
-		ArrayList<Double> labelTotals = new ArrayList<Double>(Collections.nCopies(20, 0.0)); //hard-coded for 20 labels
-		
-		
-		//for each classifier distinguishing label_i & label_i+1, update running total for 2 labels
-		for(int i = 0; i < classifiers.size(); i++) {
-			Classifier c = classifiers.get(i);
-			double weight1 = labelTotals.get(i);
-			double weight2 = labelTotals.get(i+1);
-			double y = c.classify(example);
-			if(y == 1) {
-				weight1 += y;
-			}else{
-				weight2 -= y;
-			}
-			labelTotals.set(i, weight1);
-			labelTotals.set(i+1, weight2);
-		}
-		return 0.0; //label total furthest from 0?
-	}
+    /**
+     * Constructor for AVA classifier.
+     *
+     * @param factory Factory specifying details for AVA classifier.
+     */
+    public AVAClassifier(ClassifierFactory factory) {
+        this.factory = factory;
+    }
 
-	@Override
-	public double confidence(Example example) {
-		return 0;
-	}
+    /**
+     * Method to train AVA classifier on given data set.
+     *
+     * @param data Training data set.
+     */
+    @Override
+    public void train(DataSet data) {
+        ArrayList<Double> labels = (ArrayList<Double>) data.getLabels();
+        //classifiers = new HashMap<Double[], Classifier>();
+        classifiers = new ArrayList<Classifier>();
+
+
+        //for each pair of labels, train a classifier to distinguish between the 1st and 2nd label
+        for (double label1 : labels) {
+            for (double label2 : labels.subList(labels.indexOf(label1) + 1, labels.size())) {
+                DataSet copy = new DataSet(data.getFeatureMap());
+                ArrayList<Example> examples = data.getData();
+                Classifier myClassifier = factory.getClassifier();
+                for (Example ex : examples) {
+                    if (ex.getLabel() == label1) { //set all examples labeled with label 1 as positive
+                        ex.setLabel(1.0);
+                        copy.addData(ex);
+                    } else if (ex.getLabel() == label2) { //set all examples labeled with label 2 as negative
+                        ex.setLabel(-1.0);
+                        copy.addData(ex);
+                    }
+                }
+                myClassifier.train(copy);
+                classifiers.add(myClassifier);
+            }
+        }
+
+    }
+
+    /**
+     * Classifies an example based on a trained AVA classifier. Classifiers are traversed in the same order they were
+     * constructed in.
+     *
+     * @param example Example to be classified.
+     * @return Double corresponding to the predicted label.
+     */
+    @Override
+    public double classify(Example example) {
+        int indexHolder = 0;
+        ArrayList<Double> labelTotals = new ArrayList<Double>(Collections.nCopies(20, 0.0));
+        for (int label1 = 0; label1 < labelTotals.size(); label1++) {
+            for (int label2 = label1 + 1; label2 < labelTotals.size(); label2++) {
+                Classifier myClassifier = classifiers.get(indexHolder);
+                double weight = myClassifier.classify(example);
+                labelTotals.set(label1, labelTotals.get(label1) + weight);
+                labelTotals.set(label2, labelTotals.get(label2) - weight);
+                indexHolder++;
+            }
+        }
+        return labelTotals.indexOf(Collections.max(labelTotals));
+    }
+
+    /**
+     * Method calculating the AVA classifier's confidence in a prediction for a given example.
+     *
+     * @param example Example for which confidence will be evaluated.
+     * @return Double corresponding to the confidence in the classifier's prediction; [0,1].
+     */
+    @Override
+    public double confidence(Example example) {
+        return 0;
+    }
 
 }
