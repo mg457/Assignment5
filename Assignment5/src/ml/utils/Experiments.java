@@ -36,9 +36,9 @@ public class Experiments {
 		//Q4 
 		
 		CrossValidationSet cvs = new CrossValidationSet(wineDataset, 10, true);
-		for (int i = 1; i < 11; i++) {
+		for (int i = 0; i < 10; i++) {
 			DataSetSplit dss = cvs.getValidationSet(i);
-			System.out.print(i + ",");
+			//System.out.print(i + ",");
 			
 			for(int d = 1; d < 4; d++) {
 				ClassifierFactory factory = new ClassifierFactory(ClassifierFactory.DECISION_TREE, i);
@@ -50,7 +50,7 @@ public class Experiments {
 				ac.train(dss.getTrain());
 				double ocAcc = getAccuracy(oc1, dss.getTest(), wineDataset);
 				double acAcc = getAccuracy(ac, dss.getTest(), wineDataset);
-				System.out.print(d + ", " + ocAcc + ", " + acAcc);
+				System.out.print(d + ", " + ocAcc + ", " );//+ acAcc);
 			}	
 			System.out.println("");
 		}

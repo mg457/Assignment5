@@ -38,44 +38,49 @@ public class AVAClassifier implements Classifier {
         ArrayList<Double> labels = new ArrayList<Double>();
        // Object[] labels = data.getLabels().toArray();
        // System.out.println(labels);
-        System.out.println(data.getLabels().toString());
+        //System.out.println(data.getLabels().toString());
+        System.out.println(data.getData().get(0).getLabel());
         for(double i : data.getLabels()) {
+        	//System.out.println(i);
         	labels.add(i);
         }
-        System.out.println(labels.toString());
+       // System.out.println(labels.toString());
 
         //classifiers = new HashMap<Double[], Classifier>();
         classifiers = new ArrayList<Classifier>();
 
 
         //for each pair of labels, train a classifier to distinguish between the 1st and 2nd label
-        for (double label1 : labels) {
-        	for(double label2 : labels) {
-        		if(label1 != label2) { //make sure training on 2 separate labels
+        for (int i = 0; i < labels.size(); i++ ) {
+        	double label1 = labels.get(i);
+        	for(int k = i+1; k < labels.size(); k++) {
+        		double label2 = labels.get(k);
+        		//if(label1 != label2) { //make sure training on 2 separate labels
 	                DataSet copy = new DataSet(data.getFeatureMap());
 	                ArrayList<Example> examples = data.getData();
 	                Classifier myClassifier = factory.getClassifier();
 	                for (Example ex : examples) {	
+	                	//System.out.println(ex.getLabel());
 	                    if (ex.getLabel() == (double) label1) { //set all examples labeled with label 1 as positive
-	                    	System.out.println("here1");
+	                    	//System.out.println("here1");
 	                    	Example newEx = new Example(ex);
 	                        newEx.setLabel(1.0);
 	                        copy.addData(newEx);
 	                    } else if (ex.getLabel() == (double) label2) { //set all examples labeled with label 2 as negative
-	                    	System.out.println("here2");
+	                    	//System.out.println("here2");
 	                    	Example newEx = new Example(ex);
 	                        newEx.setLabel(-1.0);
 	                        copy.addData(newEx);
 	                    }
+	              //  }
 	                }
-	                System.out.println("copy: " + copy.getData().toString());
-	                if(!copy.getData().isEmpty()) {
+	                //if(!copy.getData().isEmpty()) {
 	                	System.out.println("training");
 		                myClassifier.train(copy);
-	                }
+	              //  }
 	                classifiers.add(myClassifier);
 
-        		}
+        		
             }
         }
 
