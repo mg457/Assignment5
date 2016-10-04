@@ -55,7 +55,6 @@ public class AVAClassifier implements Classifier {
         	double label1 = labels.get(i);
         	for(int k = i+1; k < labels.size(); k++) {
         		double label2 = labels.get(k);
-        		//if(label1 != label2) { //make sure training on 2 separate labels
 	                DataSet copy = new DataSet(data.getFeatureMap());
 	                ArrayList<Example> examples = data.getData();
 	                Classifier myClassifier = factory.getClassifier();
@@ -72,15 +71,10 @@ public class AVAClassifier implements Classifier {
 	                        newEx.setLabel(-1.0);
 	                        copy.addData(newEx);
 	                    }
-	              //  }
 	                }
-	                //if(!copy.getData().isEmpty()) {
-	                //	System.out.println("training");
-		                myClassifier.train(copy);
-	              //  }
+	                myClassifier.train(copy);
 	                classifiers.add(myClassifier);
-
-        		
+	
             }
         }
 
