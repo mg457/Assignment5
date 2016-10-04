@@ -39,12 +39,12 @@ public class AVAClassifier implements Classifier {
        // Object[] labels = data.getLabels().toArray();
        // System.out.println(labels);
         //System.out.println(data.getLabels().toString());
-        System.out.println(data.getData().get(0).getLabel());
+        //System.out.println(data.getData().get(0).getLabel());
         for(double i : data.getLabels()) {
         	//System.out.println(i);
         	labels.add(i);
         }
-       // System.out.println(labels.toString());
+        System.out.println(labels.toString());
 
         //classifiers = new HashMap<Double[], Classifier>();
         classifiers = new ArrayList<Classifier>();
@@ -60,14 +60,14 @@ public class AVAClassifier implements Classifier {
 	                ArrayList<Example> examples = data.getData();
 	                Classifier myClassifier = factory.getClassifier();
 	                for (Example ex : examples) {	
-	                	//System.out.println(ex.getLabel());
+	                	System.out.println(ex.getLabel());
 	                    if (ex.getLabel() == (double) label1) { //set all examples labeled with label 1 as positive
-	                    	//System.out.println("here1");
+	                    	System.out.println("here1");
 	                    	Example newEx = new Example(ex);
 	                        newEx.setLabel(1.0);
 	                        copy.addData(newEx);
 	                    } else if (ex.getLabel() == (double) label2) { //set all examples labeled with label 2 as negative
-	                    	//System.out.println("here2");
+	                    	System.out.println("here2");
 	                    	Example newEx = new Example(ex);
 	                        newEx.setLabel(-1.0);
 	                        copy.addData(newEx);
@@ -75,7 +75,7 @@ public class AVAClassifier implements Classifier {
 	              //  }
 	                }
 	                //if(!copy.getData().isEmpty()) {
-	                	System.out.println("training");
+	                //	System.out.println("training");
 		                myClassifier.train(copy);
 	              //  }
 	                classifiers.add(myClassifier);
