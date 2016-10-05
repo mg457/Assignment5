@@ -51,10 +51,10 @@ public class AVAClassifier implements Classifier {
 
 
         //for each pair of labels, train a classifier to distinguish between the 1st and 2nd label
-        for (int i = 0; i < labels.size(); i++ ) {
-        	double label1 = labels.get(i);
-        	for(int k = i+1; k < labels.size(); k++) {
-        		double label2 = labels.get(k);
+        for (int label1 = 0; label1 < labels.size(); label1++ ) {
+        	//double label1 = labels.get(i);
+        	for(int label2 = label1+1; label2 < labels.size(); label2++) {
+        		//double label2 = labels.get(k);
 	                DataSet copy = new DataSet(data.getFeatureMap());
 	                ArrayList<Example> examples = data.getData();
 	                Classifier myClassifier = factory.getClassifier();
@@ -98,15 +98,19 @@ public class AVAClassifier implements Classifier {
                 //if y is positive, raise label1 score, lower label2 score
                 //if y is negative, lower label1 score, raise label2 score
                 if(weight > 0) {
-	                labelTotals.set(label1, labelTotals.get(label1) + weight);
-	                labelTotals.set(label2, labelTotals.get(label2) - weight);
+                    double label1Current = labelTotals.get(label1);
+                    double label2Current = labelTotals.get(label2);
+	                labelTotals.set(label1, label1Current + weight);
+	                labelTotals.set(label2, label2Current - weight);
                 }else if (weight < 0) {
-                	labelTotals.set(label1, labelTotals.get(label1) - weight);
-	                labelTotals.set(label2, labelTotals.get(label2) + weight);
+                    double label1Current = labelTotals.get(label1);
+                    double label2Current = labelTotals.get(label2);
+                	labelTotals.set(label1, label1Current - weight);
+	                labelTotals.set(label2, label2Current + weight);
                 }
                 indexHolder++;
             }
-            indexHolder = 0;
+            //indexHolder = 0;
         }
         return labelTotals.indexOf(Collections.max(labelTotals));
     }

@@ -6,7 +6,7 @@ import ml.data.*;
 public class Experiments {
 	
 	public static void main(String[] args) {
-		String wineFile = "/Users/maddie/Documents/FALL2016/MachineLearning/hw5/wines.train.txt";
+		String wineFile = "C:\\Users\\Nick\\Documents\\School\\Pomona College\\Sr 1st Sem\\Eclipse Workspace\\Assignment5\\Assignment5\\src\\ml\\wines.train";
 		DataSet wineDataset = new DataSet(wineFile, DataSet.TEXTFILE);
 		
 		//Q1
