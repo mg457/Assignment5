@@ -44,7 +44,7 @@ public class AVAClassifier implements Classifier {
         	//System.out.println(i);
         	labels.add(i);
         }
-        System.out.println(labels.toString());
+        //System.out.println(labels.toString());
 
         //classifiers = new HashMap<Double[], Classifier>();
         classifiers = new ArrayList<Classifier>();
@@ -59,14 +59,14 @@ public class AVAClassifier implements Classifier {
 	                ArrayList<Example> examples = data.getData();
 	                Classifier myClassifier = factory.getClassifier();
 	                for (Example ex : examples) {	
-	                	System.out.println(ex.getLabel());
+	                	//System.out.println(ex.getLabel());
 	                    if (ex.getLabel() == (double) label1) { //set all examples labeled with label 1 as positive
-	                    	System.out.println("here1");
+	                    	//System.out.println("here1");
 	                    	Example newEx = new Example(ex);
 	                        newEx.setLabel(1.0);
 	                        copy.addData(newEx);
 	                    } else if (ex.getLabel() == (double) label2) { //set all examples labeled with label 2 as negative
-	                    	System.out.println("here2");
+	                    	//System.out.println("here2");
 	                    	Example newEx = new Example(ex);
 	                        newEx.setLabel(-1.0);
 	                        copy.addData(newEx);
@@ -95,8 +95,15 @@ public class AVAClassifier implements Classifier {
             for (int label2 = label1 + 1; label2 < labelTotals.size(); label2++) {
                 Classifier myClassifier = classifiers.get(indexHolder);
                 double weight = myClassifier.classify(example);
-                labelTotals.set(label1, labelTotals.get(label1) + weight);
-                labelTotals.set(label2, labelTotals.get(label2) - weight);
+                //if y is positive, raise label1 score, lower label2 score
+                //if y is negative, lower label1 score, raise label2 score
+                if(weight > 0) {
+	                labelTotals.set(label1, labelTotals.get(label1) + weight);
+	                labelTotals.set(label2, labelTotals.get(label2) - weight);
+                }else if (weight < 0) {
+                	labelTotals.set(label1, labelTotals.get(label1) - weight);
+	                labelTotals.set(label2, labelTotals.get(label2) + weight);
+                }
                 indexHolder++;
             }
             indexHolder = 0;

@@ -10,18 +10,18 @@ public class Experiments {
 		DataSet wineDataset = new DataSet(wineFile, DataSet.TEXTFILE);
 		
 		//Q1
-		DecisionTreeClassifier dt = new DecisionTreeClassifier();
-		dt.setDepthLimit(0);
-		dt.train(wineDataset);
-		//System.out.println(dt.toString());
-		
-		double acc = 0.0;
-		//System.out.println(dt.classify(wineDataset.getData().get(2)));
-		for (Example ex: wineDataset.getData()) {
-			if(ex.getLabel() == dt.classify(ex)){
-				acc += 1.0/(double)wineDataset.getData().size();
-			}	
-		}
+//		DecisionTreeClassifier dt = new DecisionTreeClassifier();
+//		dt.setDepthLimit(0);
+//		dt.train(wineDataset);
+//		//System.out.println(dt.toString());
+//		
+//		double acc = 0.0;
+//		//System.out.println(dt.classify(wineDataset.getData().get(2)));
+//		for (Example ex: wineDataset.getData()) {
+//			if(ex.getLabel() == dt.classify(ex)){
+//				acc += 1.0/(double)wineDataset.getData().size();
+//			}	
+//		}
 		//System.out.println(acc);
 		
 		//Q3
@@ -42,23 +42,23 @@ public class Experiments {
 			DataSetSplit dss = cvs.getValidationSet(i);
 			//System.out.print(i + ",");
 			
-			/*for(int d = 1; d < 4; d++) {
+			for(int d = 1; d < 4; d++) {
 				ClassifierFactory factory = new ClassifierFactory(ClassifierFactory.DECISION_TREE, d);
 				OVAClassifier oc1 = new OVAClassifier(factory); //dt classifier
 				AVAClassifier ac = new AVAClassifier(factory);
 				//DecisionTreeClassifier dtc = (DecisionTreeClassifier) factory.getClassifier(); //get a new DTC
 				//dtc.setDepthLimit(d);
-				oc1.train(dss.getTrain());
-				//ac.train(dss.getTrain());
-				double ocAcc = getAccuracy(oc1, dss.getTest(), wineDataset);
-				//double acAcc = getAccuracy(ac, dss.getTest(), wineDataset);
-				System.out.print(d + ", " + ocAcc + ", " );//+ acAcc);
+				//oc1.train(dss.getTrain());
+				ac.train(dss.getTrain());
+				//double ocAcc = getAccuracy(oc1, dss.getTest(), wineDataset);
+				double acAcc = getAccuracy(ac, dss.getTest(), wineDataset);
+				System.out.println(d + ", " + acAcc );//+ acAcc);
 			}	
-			System.out.println("");*/
-			DecisionTreeClassifier dt1 = new DecisionTreeClassifier();
+			//System.out.println("");
+			/*DecisionTreeClassifier dt1 = new DecisionTreeClassifier();
 			dt1.setDepthLimit(23);
 			dt1.train(dss.getTrain());
-			System.out.println(getAccuracy(dt1, dss.getTest(), wineDataset));
+			System.out.println(getAccuracy(dt1, dss.getTest(), wineDataset));*/
 		}
 			
 	}
